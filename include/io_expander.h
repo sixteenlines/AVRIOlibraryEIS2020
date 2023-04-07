@@ -3,6 +3,9 @@
 
 #include <avr/io.h>
 
+/* I2C Setup Options */
+#define F_I2C 100000
+#define PRESCALER_I2C 1
 
 void pcf8574_init (void);
 

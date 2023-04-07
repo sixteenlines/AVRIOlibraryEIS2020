@@ -27,13 +27,11 @@ LiquidCrystalDevice_t lq_init(uint8_t address, uint8_t columns, uint8_t rows, ui
 		device.DisplayFunction |= LCD_5x10DOTS;
 	}
 
-	// SEE PAGE 45/46 FOR INITIALIZATION SPECIFICATION!
 	// according to datasheet, we need at least 40ms after power rises above 2.7V
-	// before sending commands. Arduino can turn on way befer 4.5V so we'll wait 50
 	_delay_ms(100);
 	
 	// Now we pull both RS and R/W low to begin commands
-	lq_transmitI2C(&device, LCD_NOBACKLIGHT);	// reset expanderand turn backlight off (Bit 8 =1)
+	lq_transmitI2C(&device, LCD_NOBACKLIGHT);	// reset expander and turn backlight off (Bit 8 =1)
 	_delay_ms(1000);
 
 	//put the LCD into 4 bit mode
@@ -48,11 +46,11 @@ LiquidCrystalDevice_t lq_init(uint8_t address, uint8_t columns, uint8_t rows, ui
 	lq_writeDevice4Bits(&device, 0x03 << 4);
 	_delay_us(4500); // wait min 4.1ms
 	
-	// third go!
+	// third try
 	lq_writeDevice4Bits(&device, 0x03 << 4);
 	_delay_us(150); // wait min 150 mics
 	
-	// finally, set to 4-bit interface
+	// set to 4-bit interface
 	lq_writeDevice4Bits(&device, 0x02 << 4);
 
 	// set # lines, font size, etc.

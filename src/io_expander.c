@@ -2,9 +2,9 @@
 
 void pcf8574_init (void)
 {
-	/*set bus speed according to page 175 datasheet*/
-
-	TWBR = 0x12;    //100kHz @ 16MHz F_CPU
+	/*set i2c bus speed according to page 175 datasheet atmega32*/
+	TWSR = 0;
+	TWBR = (uint8_t)((((F_CPU / F_I2C) / PRESCALER_I2C) - 16 ) / 2);
 }
 
 
@@ -20,7 +20,7 @@ unsigned char pcf8574_send_start (void)
 
 void pcf8574_send_stop (void)
 {
-	/*writing a one to TWINT clears it, TWSTO=Stop, TWEN=TWI-enable*/
+	/*clear TWINT , TWSTO=Stop, TWEN=TWI-enable*/
 	TWCR = (1<<TWINT) | (1<<TWSTO) | (1<<TWEN);	
 }
 
@@ -47,7 +47,7 @@ unsigned char pcf8574_send_add_rw (unsigned char address, unsigned char rw)
 
 unsigned char pcf8574_send_byte (unsigned char byte)
 {
-	/*TWDR contains byte to send*/
+	/*write byte to TWDR*/
 	TWDR = byte;
 	/*send content of TWDR*/
 	TWCR = (1<<TWINT) | (1<<TWEN);
