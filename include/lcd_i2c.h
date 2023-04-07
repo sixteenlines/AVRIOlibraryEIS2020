@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <stdint.h>
 
+/* set CPU speed*/
 #ifndef  F_CPU
 #define F_CPU 16000000UL
 #endif
