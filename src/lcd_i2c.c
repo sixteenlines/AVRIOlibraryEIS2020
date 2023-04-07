@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-LiquidCrystalDevice_t lq_init(uint8_t address, uint8_t columns, uint8_t rows, uint8_t dotSize)
+LiquidCrystalDevice_t lcd_init(uint8_t address, uint8_t columns, uint8_t rows, uint8_t dotSize)
 {
 	LiquidCrystalDevice_t device;
 
@@ -31,7 +31,7 @@ LiquidCrystalDevice_t lq_init(uint8_t address, uint8_t columns, uint8_t rows, ui
 	_delay_ms(100);
 	
 	// Now we pull both RS and R/W low to begin commands
-	lq_transmitI2C(&device, LCD_NOBACKLIGHT);	// reset expander and turn backlight off (Bit 8 =1)
+	lcd_transmitI2C(&device, LCD_NOBACKLIGHT);	// reset expander and turn backlight off (Bit 8 =1)
 	_delay_ms(1000);
 
 	//put the LCD into 4 bit mode
@@ -39,194 +39,194 @@ LiquidCrystalDevice_t lq_init(uint8_t address, uint8_t columns, uint8_t rows, ui
 	// figure 24, pg 46
 	
 	// we start in 8bit mode, try to set 4 bit mode
-	lq_transmitI2C(&device, 0x03 << 4);
+	lcd_transmitI2C(&device, 0x03 << 4);
 	_delay_us(4500); // wait min 4.1ms
 	
 	// second try
-	lq_writeDevice4Bits(&device, 0x03 << 4);
+	lcd_writeDevice4Bits(&device, 0x03 << 4);
 	_delay_us(4500); // wait min 4.1ms
 	
 	// third try
-	lq_writeDevice4Bits(&device, 0x03 << 4);
+	lcd_writeDevice4Bits(&device, 0x03 << 4);
 	_delay_us(150); // wait min 150 mics
 	
 	// set to 4-bit interface
-	lq_writeDevice4Bits(&device, 0x02 << 4);
+	lcd_writeDevice4Bits(&device, 0x02 << 4);
 
 	// set # lines, font size, etc.
-	lq_sendCommand(&device, LCD_FUNCTIONSET | device.DisplayFunction);
+	lcd_sendCommand(&device, LCD_FUNCTIONSET | device.DisplayFunction);
 	
 	// turn the display on with no cursor or blinking default
-	lq_turnOnDisplay(&device);
+	lcd_turnOnDisplay(&device);
 	
 	// clear it off
-	lq_clear(&device);
+	lcd_clear(&device);
 	
 	// set the entry mode
-	lq_sendCommand(&device, LCD_ENTRYMODESET | device.DisplayMode);
+	lcd_sendCommand(&device, LCD_ENTRYMODESET | device.DisplayMode);
 	
-	lq_returnHome(&device);
+	lcd_returnHome(&device);
 
 	return device;
 };
 
-void lq_print(struct LiquidCrystalDevice_t* device, char * value)
+void lcd_print(struct LiquidCrystalDevice_t* device, char * value)
 {
 	char letter = *value;
 
 	while(letter != 0x00)
 	{
-		lq_writeDeviceByte(device, letter, LCD_REGISTER_SELECT_BIT);
+		lcd_writeDeviceByte(device, letter, LCD_REGISTER_SELECT_BIT);
 		letter = *(++value);
 	}
 };
 
-void lq_turnOnBacklight(struct LiquidCrystalDevice_t* device)
+void lcd_turnOnBacklight(struct LiquidCrystalDevice_t* device)
 {
 	device->Backlight = LCD_BACKLIGHT;
-	lq_transmitI2C(device, 0);
+	lcd_transmitI2C(device, 0);
 }
 
-void lq_turnOffBacklight(struct LiquidCrystalDevice_t* device)
+void lcd_turnOffBacklight(struct LiquidCrystalDevice_t* device)
 {
 	device->Backlight = LCD_NOBACKLIGHT;
-	lq_transmitI2C(device, 0);
+	lcd_transmitI2C(device, 0);
 }
 
-void lq_clear(LiquidCrystalDevice_t* device)
+void lcd_clear(LiquidCrystalDevice_t* device)
 {
-	lq_sendCommand(device, LCD_CLEARDISPLAY); // clear display, set cursor position to zero
+	lcd_sendCommand(device, LCD_CLEARDISPLAY); // clear display, set cursor position to zero
 	_delay_us(2000);  // this command takes a long time!
 
-	lq_setCursor(device, 0, 0);
+	lcd_setCursor(device, 0, 0);
 }
 
-void lq_setCursor(LiquidCrystalDevice_t* device, uint8_t row, uint8_t column)
+void lcd_setCursor(LiquidCrystalDevice_t* device, uint8_t row, uint8_t column)
 {
 	uint8_t row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
 
-	lq_sendCommand(device, LCD_SETDDRAMADDR | (column + row_offsets[row]));
+	lcd_sendCommand(device, LCD_SETDDRAMADDR | (column + row_offsets[row]));
 }
 
-void lq_returnHome(LiquidCrystalDevice_t* device)
+void lcd_returnHome(LiquidCrystalDevice_t* device)
 {
-	lq_sendCommand(device, LCD_RETURNHOME);  // set cursor position to zero
+	lcd_sendCommand(device, LCD_RETURNHOME);  // set cursor position to zero
 	_delay_us(2000);  // this command takes a long time!
 };
 
-void lq_turnOnDisplay(LiquidCrystalDevice_t* device)
+void lcd_turnOnDisplay(LiquidCrystalDevice_t* device)
 {
 	device->DisplayControl |= LCD_DISPLAYON;
-	lq_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
+	lcd_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
 };
 
-void lq_turnOffDisplay(LiquidCrystalDevice_t* device)
+void lcd_turnOffDisplay(LiquidCrystalDevice_t* device)
 {
 	device->DisplayControl &= ~LCD_DISPLAYON;
-	lq_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
+	lcd_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
 };
 
-void lq_turnOnCursor(struct LiquidCrystalDevice_t* device)
+void lcd_turnOnCursor(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayControl |= LCD_CURSORON;
-	lq_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
+	lcd_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
 }
 
-void lq_turnOffCursor(struct LiquidCrystalDevice_t* device)
+void lcd_turnOffCursor(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayControl &= ~LCD_CURSORON;
-	lq_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
+	lcd_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
 }
 
-void lq_turnOnBlink(struct LiquidCrystalDevice_t* device)
+void lcd_turnOnBlink(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayControl |= LCD_BLINKON;
-	lq_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
+	lcd_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
 }
 
-void lq_turnOffBlink(struct LiquidCrystalDevice_t* device)
+void lcd_turnOffBlink(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayControl &= ~LCD_BLINKON;
-	lq_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
+	lcd_sendCommand(device, LCD_DISPLAYCONTROL | device->DisplayControl);
 }
 
-void lq_scrollDisplayLeft(struct LiquidCrystalDevice_t* device)
+void lcd_scrollDisplayLeft(struct LiquidCrystalDevice_t* device)
 {
-	lq_sendCommand(device, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
+	lcd_sendCommand(device, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
 }
 
-void lq_scrollDisplayRight(struct LiquidCrystalDevice_t* device)
+void lcd_scrollDisplayRight(struct LiquidCrystalDevice_t* device)
 {
-	lq_sendCommand(device, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
+	lcd_sendCommand(device, LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
 }
 
-void lq_leftToRight(struct LiquidCrystalDevice_t* device)
+void lcd_leftToRight(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayMode |= LCD_ENTRYLEFT;
-	lq_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
+	lcd_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
 }
 
-void lq_rightToLeft(struct LiquidCrystalDevice_t* device)
+void lcd_rightToLeft(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayMode &= ~LCD_ENTRYLEFT;
-	lq_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
+	lcd_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
 }
 
-void lq_turnOnAutoscroll(struct LiquidCrystalDevice_t* device)
+void lcd_turnOnAutoscroll(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayMode |= LCD_ENTRYSHIFTINCREMENT;
-	lq_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
+	lcd_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
 }
 
-void lq_turnOffAutoscroll(struct LiquidCrystalDevice_t* device)
+void lcd_turnOffAutoscroll(struct LiquidCrystalDevice_t* device)
 {
 	device->DisplayMode &= ~LCD_ENTRYSHIFTINCREMENT;
-	lq_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
+	lcd_sendCommand(device, LCD_ENTRYMODESET | device->DisplayMode);
 }
 
-void lq_createChar(struct LiquidCrystalDevice_t* device, uint8_t slot, uint8_t charmap[8])
+void lcd_createChar(struct LiquidCrystalDevice_t* device, uint8_t slot, uint8_t charmap[8])
 {
 	uint8_t i = 0;
 	slot &= 0x7; // we only have 8 locations 0-7
-	lq_sendCommand(device, LCD_SETCGRAMADDR | (slot << 3));
+	lcd_sendCommand(device, LCD_SETCGRAMADDR | (slot << 3));
 
 	for (i = 0; i < 8; i++) 
 	{
-		lq_writeDeviceByte(device, charmap[i], LCD_REGISTER_SELECT_BIT);
+		lcd_writeDeviceByte(device, charmap[i], LCD_REGISTER_SELECT_BIT);
 	}
 }
 
 
-void lq_sendCommand(LiquidCrystalDevice_t* device, uint8_t command)
+void lcd_sendCommand(LiquidCrystalDevice_t* device, uint8_t command)
 {
-	lq_writeDeviceByte(device, command, 0);
+	lcd_writeDeviceByte(device, command, 0);
 }
 
-void lq_writeDeviceByte(LiquidCrystalDevice_t* device, uint8_t value, uint8_t mode)
+void lcd_writeDeviceByte(LiquidCrystalDevice_t* device, uint8_t value, uint8_t mode)
 {
 	uint8_t highnib= value & 0xf0;
 	uint8_t lownib= (value<<4) & 0xf0;
 
-	lq_writeDevice4Bits(device, highnib | mode);
-	lq_writeDevice4Bits(device, lownib | mode);
+	lcd_writeDevice4Bits(device, highnib | mode);
+	lcd_writeDevice4Bits(device, lownib | mode);
 };
 
-void lq_writeDevice4Bits(LiquidCrystalDevice_t* device, uint8_t value)
+void lcd_writeDevice4Bits(LiquidCrystalDevice_t* device, uint8_t value)
 {
-	lq_transmitI2C(device, value);
-	lq_writeDevicePulse(device, value);
+	lcd_transmitI2C(device, value);
+	lcd_writeDevicePulse(device, value);
 };
 
-void lq_writeDevicePulse(LiquidCrystalDevice_t* device, uint8_t value)
+void lcd_writeDevicePulse(LiquidCrystalDevice_t* device, uint8_t value)
 {
-	lq_transmitI2C(device, value | LCD_ENABLE_BIT);
+	lcd_transmitI2C(device, value | LCD_ENABLE_BIT);
 	_delay_us(2);
 
-	lq_transmitI2C(device, value & ~LCD_ENABLE_BIT);
+	lcd_transmitI2C(device, value & ~LCD_ENABLE_BIT);
 	_delay_us(50);
 };
 
-void lq_transmitI2C(LiquidCrystalDevice_t* device, uint8_t value)
+void lcd_transmitI2C(LiquidCrystalDevice_t* device, uint8_t value)
 {
 	pcf8574_set_outputs(device->Address, value | device->Backlight);
 };
