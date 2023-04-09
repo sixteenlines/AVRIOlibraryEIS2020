@@ -51,16 +51,16 @@ void adc_channel_select(unsigned char channel)
 	return;
 }
 
-double adc_readvoltage(unsigned char channel) {
-
+double adc_readvoltage(unsigned char channel) 
+{
 	//get the raw input
 	int analogReading = adc_read(channel);
-    return analogReading/1024*AREF;
+	return analogReading/1024*AREF;
 }
 
-unsigned int adc_read(unsigned char channel) {
-
-    int analogReading = 0;
+unsigned int adc_read(unsigned char channel) 
+{
+	int analogReading = 0;
 	unsigned char LSB;
 	unsigned char MSB;
 	adc_channel_select(channel);
