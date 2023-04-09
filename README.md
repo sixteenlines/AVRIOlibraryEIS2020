@@ -5,7 +5,7 @@ Repo for IHK Abschlussprüfung Teil 2 Sommer 23
 
 ### 1. Import dependencies from lib
 
-avr_hd44780
+Markup : * avr_hd44780
 
 ### 2. Include hd44780.h in project
 
@@ -68,8 +68,8 @@ int main() {
 
 ### 1. Import dependencies from lib
 
-i2c_master
-i2c_dac
+Markup : * i2c_master
+         * i2c_dac
 
 ### 2. Include mcp4725.h in project
 
@@ -97,7 +97,7 @@ the setvoltage function to have the output value calculated based on DACREF.
 
 ### 1. Import dependencies from lib
 
-avr_adc
+Markup : * avr_adc
 
 ### 2. Include adc32.h in project
 
@@ -130,9 +130,9 @@ double adc5 = adc_readvoltage(5);
 
 ### 1. Import dependencies from lib
 
-i2c_expander
-i2c_master
-i2c_lcd
+Markup : * i2c_expander
+         * i2c_master
+         * i2c_lcd
 
 ### 2. Include lcd_i2c.h in project
 
