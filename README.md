@@ -26,7 +26,7 @@ All pins have to be on the same port, in the same order.
 #define LCD_DDR     DDRB
 #define LCD_PORT    PORTB
 #define LCD_PIN     PINB
-#define LCD_RS		0
+#define LCD_RS	    0
 #define LCD_RW      1
 #define LCD_EN		2
 #define LCD_D4		4
@@ -62,7 +62,7 @@ int main() {
 }
 ```
 
-![alt text](https://github.com/burndb/AVRIOlibraryEIS2020/tree/master/img/lcd_demo.jpg?raw=true)
+![Demo Output](img/lcd_demo.jpg)
 
 ## Instructions I2C DAC library:
 
