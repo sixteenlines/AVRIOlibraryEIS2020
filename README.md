@@ -26,13 +26,13 @@ All pins have to be on the same port, in the same order.
 #define LCD_DDR     DDRB
 #define LCD_PORT    PORTB
 #define LCD_PIN     PINB
-#define LCD_RS	    0
+#define LCD_RS      0
 #define LCD_RW      1
-#define LCD_EN		2
-#define LCD_D4		4
-#define LCD_D5		5
+#define LCD_EN      2
+#define LCD_D4      4
+#define LCD_D5      5
 #define LCD_D6		6
-#define LCD_D7		7
+#define LCD_D7	    7
 ```
 
 Use lcd_init before writing to the display. Port Operation is set up
