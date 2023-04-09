@@ -1,5 +1,5 @@
 #include "lcd_i2c.h"
-#include "io_expander.h"
+#include "pcf8574.h"
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -80,6 +80,25 @@ void lcd_print(struct LiquidCrystalDevice_t* device, char * value)
 		letter = *(++value);
 	}
 };
+
+void lcd_print_int(struct LiquidCrystalDevice_t* device, int32_t value)
+{
+	if (value == 0 )
+	{
+		lcd_print(device, "0");
+	}
+	else if ((value > INT32_MIN ) && (value <= INT32_MAX))
+	{
+		//int32_max + sign + null = 12 bytes
+		char arr[12] = { '\0' };
+		
+		//Convert integer to array (returns in reversed order)
+		int2bcd(value, arr);
+		
+		//Print
+		lcd_print(device, arr);
+	}
+}
 
 void lcd_turnOnBacklight(struct LiquidCrystalDevice_t* device)
 {
@@ -230,3 +249,102 @@ void lcd_transmitI2C(LiquidCrystalDevice_t* device, uint8_t value)
 {
 	pcf8574_set_outputs(device->Address, value | device->Backlight);
 };
+
+void int2bcd(int32_t value, char bcd[])
+{
+	uint8_t isNegative = 0;
+	
+	bcd[0] = bcd[1] = bcd[2] =
+	bcd[3] = bcd[4] = bcd[5] =
+	bcd[6] = bcd[7] = bcd[8] =
+	bcd[9] = bcd[10] = '0';
+	
+	if (value < 0)
+	{
+		isNegative = 1;
+		value = -value;
+	}
+	
+	while (value > 1000000000)
+	{
+		value -= 1000000000;
+		bcd[1]++;
+	}
+	
+	while (value >= 100000000)
+	{
+		value -= 100000000;
+		bcd[2]++;
+	}
+		
+	while (value >= 10000000)
+	{
+		value -= 10000000;
+		bcd[3]++;
+	}
+	
+	while (value >= 1000000)
+	{
+		value -= 1000000;
+		bcd[4]++;
+	}
+	
+	while (value >= 100000)
+	{
+		value -= 100000;
+		bcd[5]++;
+	}
+
+	while (value >= 10000)
+	{
+		value -= 10000;
+		bcd[6]++;
+	}
+
+	while (value >= 1000)
+	{
+		value -= 1000;
+		bcd[7]++;
+	}
+	
+	while (value >= 100)
+	{
+		value -= 100;
+		bcd[8]++;
+	}
+	
+	while (value >= 10)
+	{
+		value -= 10;
+		bcd[9]++;
+	}
+
+	while (value >= 1)
+	{
+		value -= 1;
+		bcd[10]++;
+	}
+
+	uint8_t i = 0;
+	//Find first non zero digit
+	while (bcd[i] == '0')
+		i++;
+
+	//Add sign 
+	if (isNegative)
+	{
+		i--;
+		bcd[i] = '-';
+	}
+
+	//Shift array
+	uint8_t end = 10 - i;
+	uint8_t offset = i;
+	i = 0;
+	while (i <= end)
+	{
+		bcd[i] = bcd[i + offset];
+		i++;
+	}
+	bcd[i] = '\0';
+}

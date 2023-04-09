@@ -80,6 +80,8 @@ void lcd_turnOffBacklight(struct LiquidCrystalDevice_t* device);
 
 void lcd_print(struct LiquidCrystalDevice_t* device, char* value);
 
+void lcd_print_int(struct LiquidCrystalDevice_t* device, int32_t value);
+
 void lcd_turnOnDisplay(struct LiquidCrystalDevice_t* device);
 
 void lcd_turnOffDisplay(struct LiquidCrystalDevice_t* device);
@@ -116,5 +118,7 @@ void lcd_writeDevice4Bits(struct LiquidCrystalDevice_t* device, uint8_t value);
 void lcd_writeDevicePulse(struct LiquidCrystalDevice_t* device, uint8_t value);
 
 void lcd_transmitI2C(struct LiquidCrystalDevice_t* device, uint8_t value);
+
+void int2bcd(int32_t value, char BCD[]);
 
 #endif /* _LCD_I2C_H */

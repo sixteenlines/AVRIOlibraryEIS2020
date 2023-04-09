@@ -1,14 +1,14 @@
-#include "io_expander.h"
+#include "i2c_master.h"
+#include <avr/io.h>
 
-void pcf8574_init (void)
+void i2c_init (void)
 {
-	/*set i2c bus speed according to page 175 datasheet atmega32*/
+	/*set i2c bus speed according to avr data sheet*/
 	TWSR = 0;
 	TWBR = (uint8_t)((((F_CPU / F_I2C) / PRESCALER_I2C) - 16 ) / 2);
 }
 
-
-unsigned char pcf8574_send_start (void)
+unsigned char i2c_send_start (void)
 {
 	/*writing a one to TWINT clears it, TWSTA=Start, TWEN=TWI-enable*/
 	TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN);
@@ -18,14 +18,14 @@ unsigned char pcf8574_send_start (void)
 }
 
 
-void pcf8574_send_stop (void)
+void i2c_send_stop (void)
 {
 	/*clear TWINT , TWSTO=Stop, TWEN=TWI-enable*/
 	TWCR = (1<<TWINT) | (1<<TWSTO) | (1<<TWEN);	
 }
 
 
-unsigned char pcf8574_send_add_rw (unsigned char address, unsigned char rw)
+unsigned char i2c_send_add_rw (unsigned char address, unsigned char rw)
 {
 	/*address can be 0 .. 8; rw=0 --> write, rw=1 --> read*/
 	unsigned char addr_byte = 0;
@@ -45,7 +45,7 @@ unsigned char pcf8574_send_add_rw (unsigned char address, unsigned char rw)
 }
 
 
-unsigned char pcf8574_send_byte (unsigned char byte)
+unsigned char i2c_send_byte (unsigned char byte)
 {
 	/*write byte to TWDR*/
 	TWDR = byte;
@@ -57,7 +57,7 @@ unsigned char pcf8574_send_byte (unsigned char byte)
 }
 
 
-unsigned char pcf8574_read_byte (void)
+unsigned char i2c_read_byte (void)
 {
 	/*send content of TWDR; TWEA = enable ACK*/
 	TWCR = (1<<TWINT) | (1<<TWEA) | (1<<TWEN);
@@ -65,25 +65,3 @@ unsigned char pcf8574_read_byte (void)
 	while (!(TWCR & (1<<TWINT)));
 	return TWDR;
 }
-
-
-unsigned char pcf8574_get_inputs (unsigned char address)
-{
-	pcf8574_init ();
-	pcf8574_send_start ();
-	pcf8574_send_add_rw (address, 1);
-	unsigned char input = pcf8574_read_byte ();
-	pcf8574_send_stop ();
-	return input;
-}
-
-
-void pcf8574_set_outputs (unsigned char address, unsigned char byte)
-{
-	pcf8574_init ();
-	pcf8574_send_start ();
-	pcf8574_send_add_rw (address, 0);
-	pcf8574_send_byte (byte);
-	pcf8574_send_stop ();
-}
-
