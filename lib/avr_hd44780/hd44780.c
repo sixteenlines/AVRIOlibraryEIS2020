@@ -112,7 +112,7 @@ void lcd_print(char *text)
     }
 }
 
-void lcd_printChar(unsigned char byte) 
+void lcd_printChar(unsigned char byte)
 {
     lcd_sendData(byte);
 }
