@@ -140,15 +140,22 @@ double adc5 = adc_readvoltage(5);
 #include "lcd_i2c.h"
 ```
 
-Adjust the snippet according to your setup.
-Remember to check I2C address of your port expander as well as LCD size:
+Adjust the snippet according to your setup. LCD specs are stored in a struct, which is then passed
+to every function to ensure the correct device is being addressed.
+Remember to check the I2C address of your port expander as well as LCD size:
 
 ```C
 LiquidCrystalDevice_t device = lcd_init(<address>, <columns>, <rows>, LCD_5x8DOTS); 
 
 lcd_turnOnBacklight(&device);
-
-lcd_print(&device, "Hello world!");
-lcd_setCursor(&device, 1, 0); 
-lcd_print(&device, "Sommer 2023");
+lcd_print(&device, "Temp:");
+lcd_setCursor(&device, 0, 9);
+lcd_printDouble(&device, 20.5, 10);
+lcd_printChar(&device, DEGREE);
+lcd_print(&device, "C");
+lcd_setCursor(&device, 1, 0);
+lcd_print(&device, "Humid:");
+lcd_setCursor(&device, 1, 9);
+lcd_printInt(&device, 45);
+lcd_printChar(&device, PERCENT);
 ```
