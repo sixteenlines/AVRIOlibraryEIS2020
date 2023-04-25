@@ -3,7 +3,7 @@
 int main()
 {
 
-    LiquidCrystalDevice_t device = lcd_init(0x22, 16, 2, LCD_5x8DOTS);
+    LiquidCrystalDevice_t device = lcd_init(0x3A, 16, 2, LCD_5x8DOTS);
 
     lcd_turnOnBacklight(&device);
     lcd_print(&device, "Temp:");
