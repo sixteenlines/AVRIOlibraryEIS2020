@@ -9,6 +9,9 @@ int main()
 
     lcd_turnOnBacklight(&device);
     lcd_print(&device, "Test: ");
+    for (int i = 0; i < 10000; i++) {
+        
+    }
     adc_init();
     lcd_printInt(&device, adc_read(3));
 
