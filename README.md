@@ -116,7 +116,7 @@ Library is set to use AREF as reference voltage. Make sure 1-2 is jumped on J2:A
 Prescaler ist set to 1 for fastest conversion time.
 Use adc_init to setup the adc before using read function. Pass 0-7 to select ADC port to read.
 The adc_read function will directly return the 10 bit value.
-To get a the analog voltage use adc_readvoltage.
+To get the analog voltage use adc_readvoltage.
 
 ```C
 adc_init();
