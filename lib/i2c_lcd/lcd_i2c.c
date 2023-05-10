@@ -113,6 +113,7 @@ void lcd_printDouble(struct LiquidCrystalDevice_t *device, double value, int pre
 		lcd_printChar(device, '0');
 		lcd_printChar(device, '.');
 		lcd_printChar(device, '0');
+		lcd_printChar(device, '0');
 	}
 	else if ((value >= (-2147483647)) && (value < 2147483648))
 	{
