@@ -8,7 +8,6 @@ int main()
     adc_init();
     LiquidCrystalDevice_t device = lcd_init(0x3A, 16, 2, LCD_5x8DOTS);
 
-    lcd_turnOnBacklight(&device);
     lcd_print(&device, "Test: ");
     lcd_printDouble(&device, adc_readvoltage(3), 100);
     lcd_printChar(&device, 'V');
