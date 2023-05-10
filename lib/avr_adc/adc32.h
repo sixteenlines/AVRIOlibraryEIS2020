@@ -4,6 +4,7 @@
 #define AREF 5.0
 
 void adc_init();
+void dummy_conversion();
 void adc_channel_select(unsigned char channel);
 double adc_readvoltage(unsigned char channel);
 int adc_read(unsigned char channel);

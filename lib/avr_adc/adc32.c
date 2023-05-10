@@ -1,15 +1,12 @@
 #include "adc32.h"
 #include <avr/io.h>
+#include <util/delay.h>
 
 void adc_init()
 {
-	ADCSRA |= 0x00;		   // Prescaler 1
-	ADMUX |= 0x40;		   // Set ext. AREF as Vref
-	ADCSRA |= (1 << ADEN); // enable ADC
-	ADCSRA |= (1 << ADSC); // start dummy conversion
-	while ((ADCSRA & (1 << ADSC)) == 1)
-		; // Wait until conversion is done
-	(void)ADCW;
+	ADCSRA |= (1 << ADEN);
+	ADCSRA |= 0x07; // Prescaler 1
+	ADMUX |= 0x40;	// Set ext. AREF as Vref
 }
 
 void adc_channel_select(unsigned char channel)
@@ -51,23 +48,22 @@ void adc_channel_select(unsigned char channel)
 double adc_readvoltage(unsigned char channel)
 {
 	// get the raw input
-	int analogReading = adc_read(channel);
+	double analogReading = adc_read(channel);
 	return analogReading / 1024 * AREF;
 }
 
 int adc_read(unsigned char channel)
 {
-	int analogReading = 0;
-	unsigned char LSB;
-	unsigned char MSB;
 	adc_channel_select(channel);
 	ADCSRA |= (1 << ADSC); // start conversion
 	while ((ADCSRA & (1 << ADSC)) == 1)
+		;		// Wait until conversion is done
+	(void)ADCW; // discard first value after channel change
+	_delay_ms(2);
+	ADCSRA |= (1 << ADSC); // start conversion
+	while ((ADCSRA & (1 << ADSC)) == 1)
 		; // Wait until conversion is done
-	LSB = ADCL;
-	MSB = ADCH;
-	analogReading |= MSB;
-	analogReading <<= 8;
-	analogReading |= LSB;
+
+	int analogReading = ADCW;
 	return analogReading;
 }
