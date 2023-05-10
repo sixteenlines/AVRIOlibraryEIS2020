@@ -1,3 +1,8 @@
+/* set CPU speed*/
+#ifndef F_CPU
+#define F_CPU 16000000UL
+#endif
+
 #ifndef _ADC_32_H
 #define _ADC_32_H
 
