@@ -96,14 +96,14 @@ void lcd_printInt(struct LiquidCrystalDevice_t *device, int value)
 	int length = snprintf(NULL, 0, "%d", value);
 
 	// Allocate memory for the string
-	char *strInt = (char *)malloc((length + 1) * sizeof(char));
-	if (strInt == NULL)
+	char *strValue = malloc(length + 1);
+	if (strValue == NULL)
 		return;
-	snprintf(strInt, length + 1, "%d", value);
+	snprintf(strValue, length + 1, "%d", value);
 
 	// Print
-	lcd_print(device, strInt);
-	free(strInt);
+	lcd_print(device, strValue);
+	free(strValue);
 }
 
 void lcd_printDouble(struct LiquidCrystalDevice_t *device, double value, int precision)

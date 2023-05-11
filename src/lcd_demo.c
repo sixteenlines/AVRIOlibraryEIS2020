@@ -1,6 +1,8 @@
 #include "lcd_i2c.h"
 #include "adc32.h"
 #include "mcp4725.h"
+#include "pcf8574.h"
+#include "util/delay.h"
 
 int main()
 {
@@ -8,12 +10,18 @@ int main()
     adc_init();
     LiquidCrystalDevice_t device = lcd_init(0x3A, 16, 2, LCD_5x8DOTS);
 
-    lcd_print(&device, "Test: ");
-    lcd_printDouble(&device, adc_readvoltage(3), 100);
-    lcd_printChar(&device, 'V');
-
     while (1)
-        ;
+    {
+        for (int i = 255; i > 0; i--)
+        {
+            _delay_ms(100);
+            lcd_returnHome(&device);
+            // pcf8574_set_outputs(0x21, i);
+            lcd_print(&device, "Test: ");
+            lcd_printDouble(&device, adc_readvoltage(0), 100);
+            lcd_printChar(&device, 'V');
+        }
+    }
 
     return 0;
 }
