@@ -12,15 +12,12 @@ int main()
 
     while (1)
     {
-        for (int i = 255; i > 0; i--)
-        {
-            _delay_ms(100);
-            lcd_returnHome(&device);
-            // pcf8574_set_outputs(0x21, i);
-            lcd_print(&device, "Test: ");
-            lcd_printDouble(&device, adc_readvoltage(0), 100);
-            lcd_printChar(&device, 'V');
-        }
+        _delay_ms(100);
+        lcd_returnHome(&device);
+        pcf8574_set_outputs(0x21, (~(adc_read(0) / 4)));
+        lcd_print(&device, "Test: ");
+        lcd_printDouble(&device, adc_readvoltage(0), 100);
+        lcd_printChar(&device, 'V');
     }
 
     return 0;

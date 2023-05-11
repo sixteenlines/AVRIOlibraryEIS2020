@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 LiquidCrystalDevice_t lcd_init(uint8_t address, uint8_t columns, uint8_t rows, uint8_t dotSize)
 {
@@ -91,7 +92,7 @@ void lcd_printChar(struct LiquidCrystalDevice_t *device, char value)
 	lcd_writeDeviceByte(device, value, LCD_REGISTER_SELECT_BIT);
 };
 
-void lcd_printInt(struct LiquidCrystalDevice_t *device, int value)
+void lcd_printInt(struct LiquidCrystalDevice_t *device, int value, bool leadingZero)
 {
 	int length = snprintf(NULL, 0, "%d", value);
 
@@ -99,6 +100,10 @@ void lcd_printInt(struct LiquidCrystalDevice_t *device, int value)
 	char *strValue = malloc(length + 1);
 	if (strValue == NULL)
 		return;
+	if (length == 1 && leadingZero == 1)
+	{
+		lcd_printChar(device, '0');
+	}
 	snprintf(strValue, length + 1, "%d", value);
 
 	// Print
@@ -124,10 +129,11 @@ void lcd_printDouble(struct LiquidCrystalDevice_t *device, double value, int pre
 			lcd_printChar(device, '-');
 		}
 		// Print integer part
-		lcd_printInt(device, value);
+		lcd_printInt(device, value, 0);
 		lcd_printChar(device, '.');
 		// Print decimal part
-		lcd_printInt(device, (value - (int)(value)) * precision);
+		value = (value - (int)value) * precision;
+		lcd_printInt(device, value, 1);
 	}
 }
 
