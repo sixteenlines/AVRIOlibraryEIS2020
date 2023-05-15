@@ -82,7 +82,7 @@ void lcd_turnOffBacklight(struct LiquidCrystalDevice_t *device);
 void lcd_print(struct LiquidCrystalDevice_t *device, char *value);
 void lcd_printChar(struct LiquidCrystalDevice_t *device, char value);
 void lcd_printDouble(struct LiquidCrystalDevice_t *device, double value, int precision);
-void lcd_printInt(struct LiquidCrystalDevice_t *device, int value, bool leadingZero);
+void lcd_printInt(struct LiquidCrystalDevice_t *device, int value);
 void lcd_turnOnDisplay(struct LiquidCrystalDevice_t *device);
 void lcd_turnOffDisplay(struct LiquidCrystalDevice_t *device);
 void lcd_turnOnCursor(struct LiquidCrystalDevice_t *device);

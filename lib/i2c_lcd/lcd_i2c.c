@@ -92,7 +92,7 @@ void lcd_printChar(struct LiquidCrystalDevice_t *device, char value)
 	lcd_writeDeviceByte(device, value, LCD_REGISTER_SELECT_BIT);
 };
 
-void lcd_printInt(struct LiquidCrystalDevice_t *device, int value, bool leadingZero)
+void lcd_printInt(struct LiquidCrystalDevice_t *device, int value)
 {
 	int length = snprintf(NULL, 0, "%d", value);
 
@@ -100,10 +100,6 @@ void lcd_printInt(struct LiquidCrystalDevice_t *device, int value, bool leadingZ
 	char *strValue = malloc(length + 1);
 	if (strValue == NULL)
 		return;
-	if (length == 1 && leadingZero == 1)
-	{
-		lcd_printChar(device, '0');
-	}
 	snprintf(strValue, length + 1, "%d", value);
 
 	// Print
@@ -111,13 +107,13 @@ void lcd_printInt(struct LiquidCrystalDevice_t *device, int value, bool leadingZ
 	free(strValue);
 }
 
+// pass precision 1-3 for  up to 3 decimal digits
 void lcd_printDouble(struct LiquidCrystalDevice_t *device, double value, int precision)
 {
 	if (value == 0)
 	{
 		lcd_printChar(device, '0');
 		lcd_printChar(device, '.');
-		lcd_printChar(device, '0');
 		lcd_printChar(device, '0');
 	}
 	else if ((value >= (-2147483647)) && (value < 2147483648))
@@ -128,12 +124,41 @@ void lcd_printDouble(struct LiquidCrystalDevice_t *device, double value, int pre
 			value = -value;
 			lcd_printChar(device, '-');
 		}
+		else if (value >= 0)
+		{
+			lcd_printChar(device, ' ');
+		}
 		// Print integer part
-		lcd_printInt(device, value, 0);
+		lcd_printInt(device, value);
 		lcd_printChar(device, '.');
 		// Print decimal part
-		value = (value - (int)value) * precision;
-		lcd_printInt(device, value, 1);
+		if (precision == 1)
+		{
+			value = (value - (int)value) * 10;
+			lcd_printInt(device, value);
+		}
+		else if (precision == 2)
+		{
+			value = (value - (int)value) * 100;
+			if (value < 10)
+			{
+				lcd_printChar(device, '0');
+			}
+			lcd_printInt(device, value);
+		}
+		else if (precision == 3)
+		{
+			value = (value - (int)value) * 1000;
+			if (value < 10)
+			{
+				lcd_print(device, "00");
+			}
+			else if (value < 100)
+			{
+				lcd_printChar(device, '0');
+			}
+			lcd_printInt(device, value);
+		}
 	}
 }
 

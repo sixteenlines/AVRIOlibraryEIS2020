@@ -16,7 +16,6 @@ void adc_channel_select(unsigned char channel)
 	switch (channel)
 	{
 	case 0:
-		ADMUX |= 0x00;
 		break;
 	case 1:
 		ADMUX |= (1 << MUX0);
