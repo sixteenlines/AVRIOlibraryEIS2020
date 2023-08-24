@@ -130,29 +130,20 @@ void lcd_printInt(int num)
     lcd_print(strInt);
     free(strInt);
 }
+
 void lcd_printDouble(double dnum, int precision)
 {
-
-    if (dnum == 0)
-    {
-        lcd_sendData('0');
-        lcd_sendData('.');
-        lcd_sendData('0');
-    }
-    else if ((dnum >= (-2147483647)) && (dnum < 2147483648))
-    {
-        // Print sign
-        if (dnum < 0)
-        {
-            dnum = -dnum;
-            lcd_sendData('-');
-        }
-        // Print integer part
-        lcd_printInt(dnum);
-        lcd_sendData('.');
-        // Print decimal part
-        lcd_printInt((dnum - (uint32_t)(dnum)) * precision);
-    }
+	int length = snprintf(NULL, 0, "%f", dnum);
+	
+	// Allocate memory for the string
+	char *strValue = malloc(length + 1);
+	if (strValue == NULL)
+		return;
+	dtostrf(dnum, 4, precision, strValue);
+	
+	// Print
+	lcd_print(strValue);
+	free(strValue);
 }
 
 static inline void lcd_pulseEn()
