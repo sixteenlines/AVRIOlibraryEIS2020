@@ -110,56 +110,17 @@ void lcd_printInt(struct LiquidCrystalDevice_t *device, int value)
 // pass precision 1-3 for  up to 3 decimal digits
 void lcd_printDouble(struct LiquidCrystalDevice_t *device, double value, int precision)
 {
-	if (value == 0)
-	{
-		lcd_printChar(device, '0');
-		lcd_printChar(device, '.');
-		lcd_printChar(device, '0');
-	}
-	else if ((value >= (-2147483647)) && (value < 2147483648))
-	{
-		// Print sign
-		if (value < 0)
-		{
-			value = -value;
-			lcd_printChar(device, '-');
-		}
-		else if (value >= 0)
-		{
-			lcd_printChar(device, ' ');
-		}
-		// Print integer part
-		lcd_printInt(device, value);
-		lcd_printChar(device, '.');
-		// Print decimal part
-		if (precision == 1)
-		{
-			value = (value - (int)value) * 10;
-			lcd_printInt(device, value);
-		}
-		else if (precision == 2)
-		{
-			value = (value - (int)value) * 100;
-			if (value < 10)
-			{
-				lcd_printChar(device, '0');
-			}
-			lcd_printInt(device, value);
-		}
-		else if (precision == 3)
-		{
-			value = (value - (int)value) * 1000;
-			if (value < 10)
-			{
-				lcd_print(device, "00");
-			}
-			else if (value < 100)
-			{
-				lcd_printChar(device, '0');
-			}
-			lcd_printInt(device, value);
-		}
-	}
+	int length = snprintf(NULL, 0, "%d", value);
+	
+	// Allocate memory for the string
+	char *strValue = malloc(length + 1);
+	if (strValue == NULL)
+		return;
+	dtostrf(value, 4, precision, strValue);
+	
+	// Print
+	lcd_print(device, strValue);
+	free(strValue);
 }
 
 void lcd_turnOnBacklight(struct LiquidCrystalDevice_t *device)
